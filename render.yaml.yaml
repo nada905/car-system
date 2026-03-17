@@ -1,0 +1,32 @@
+# render.yaml — تعريف خدمات Frontend (Static) و Backend (Web) و Managed PostgreSQL
+# استبدل placeholders بالقيم الفعلية إذا لزم
+
+services:
+  - type: static
+    name: car-system-frontend
+    repo: https://github.com/nada905/car-system
+    branch: main
+    root: /
+    buildCommand: "npm ci && npm run build"
+    publishPath: "dist"
+    env:
+      VITE_API_BASE_URL: "https://car-system-backend.onrender.com" # تعديل لاحق في لوحة Render لو لزم
+    autoDeploy: true
+
+  - type: web
+    name: car-system-backend
+    repo: https://github.com/nada905/car-system
+    branch: main
+    root: packages/backend
+    buildCommand: "npm ci && npm run build"
+    startCommand: "node dist/index.js"
+    env:
+      NODE_ENV: "production"
+      CORS_ORIGIN: "https://car-system-frontend.onrender.com" # عدّله للنطاق الفعلي
+    autoDeploy: true
+
+databases:
+  - name: car-system-db
+    engine: "postgres"
+    plan: "starter" # اختر plan مناسب (starter/free أو higher)
+    region: "oregon" # اختياري — عيّن المنطقة القريبة منك
